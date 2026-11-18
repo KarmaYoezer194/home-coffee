@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HOM Coffee</title>
+<meta name="description" content="HOM Coffee, Bangkok — Doi Chang beans roasted in-house, Thai iced classics and a seat waiting for you. Menu, hours and LINE reservations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Yellowtail&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Noto+Serif+Thai:wght@700;800&family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a scroll story. The product sits in the middle of the screen while the chapter
+   around it changes: bean → roast → pour → ingredients → drinks → your seat. Huge type, cream and espresso. */
+:root {
+  --cream: #F3ECE2;
+  --latte: #E7D6C1;
+  --espresso: #2A1911;
+  --muted: #7A6656;
+  --caramel: #C6823F;
+  --line: #DCCDBA;
+  --card-1: #EAC79C;
+  --card-2: #DCD5EC;
+  --card-3: #D3E4D2;
+  --card-4: #F0D9CB;
+  --font-display: "Playfair Display", "Noto Serif Thai", Georgia, serif;
+  --font-script: "Yellowtail", cursive;
+  --font-body: "DM Sans", "Noto Sans Thai", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); color: var(--espresso); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+html[lang="th"] body { line-height: 1.75; }
+img, svg { max-width: 100%; display: block; }
+a { color: inherit; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: 900; line-height: .86; letter-spacing: -0.02em; text-transform: uppercase; text-wrap: balance; }
+html[lang="th"] h1, html[lang="th"] h2, html[lang="th"] h3 { font-family: "Noto Serif Thai", serif; font-weight: 800; line-height: 1.2; letter-spacing: 0; text-transform: none; }
+.wrap { width: min(1280px, 100% - 48px); margin-inline: auto; }
+@media (max-width: 600px) { .wrap { width: calc(100% - 32px); } }
+.script { font-family: var(--font-script); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--caramel); }
+.label { font-size: .74rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+html[lang="th"] .label { letter-spacing: .04em; font-size: .86rem; text-transform: none; }
+:focus-visible { outline: 2px solid var(--caramel); outline-offset: 3px; border-radius: 6px; }
+
+/* Image slots: a real PNG from photos/ replaces the drawn placeholder automatically */
+.asset { position: relative; }
+.asset > svg { width: 100%; height: 100%; }
+.asset > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+.asset.has-photo > img { display: block; }
+.asset.has-photo > svg { display: none; }
+.show-slots .asset::after { content: attr(data-file); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #000; color: #fff; font: 600 11px/1.2 monospace; padding: 4px 6px; border-radius: 4px; white-space: nowrap; z-index: 5; }
+.show-slots .asset { outline: 1px dashed #c00; }
+
+.demo-bar { background: var(--espresso); color: #E9DCCB; font-size: .8rem; padding: 7px 0; }
+.demo-bar .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; }
+.demo-bar a { color: #F3C78F; }
+
+header.site { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--cream) 86%, transparent); backdrop-filter: blur(12px); }
+header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; }
+.brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+.brand b { font-family: var(--font-display); font-weight: 900; font-size: 1.7rem; letter-spacing: .02em; line-height: 1; }
+.brand span { font-family: var(--font-script); color: var(--caramel); font-size: 1.25rem; }
+nav.links { display: flex; gap: 28px; font-size: .9rem; font-weight: 500; }
+nav.links a { text-decoration: none; color: var(--muted); }
+nav.links a:hover { color: var(--espresso); }
+.head-r { display: flex; align-items: center; gap: 14px; }
+.lang { display: flex; gap: 2px; }
+.lang button { font: 700 .8rem var(--font-body); background: none; border: 0; padding: 6px 7px; color: var(--muted); cursor: pointer; border-radius: 6px; }
+.lang button[aria-pressed="true"] { background: var(--espresso); color: var(--cream); }
+@media (max-width: 900px) { nav.links { display: none; } .head-r .pill { display: none; } }
+
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font: 700 .9rem/1 var(--font-body); padding: 14px 22px; border-radius: 999px; border: 1.5px solid var(--espresso); background: transparent; color: var(--espresso); text-decoration: none; cursor: pointer; transition: background .2s, color .2s, transform .2s; }
+.pill:hover { transform: translateY(-2px); }
+.pill.dark { background: var(--espresso); color: var(--cream); }
+.pill.caramel { background: var(--caramel); border-color: var(--caramel); color: #fff; }
+.pill.line { background: #06C755; border-color: #06C755; color: #fff; }
+.pill.sm { padding: 10px 16px; font-size: .82rem; }
+.pill svg { width: 16px; height: 16px; }
+
+/* ---------- HERO ---------- */
+.hero { position: relative; height: min(100svh - 70px, 860px); min-height: 560px; overflow: hidden; }
+.hero .wrap { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+.hero h1 { font-size: clamp(4.2rem, 12.5vw, 11.5rem); position: relative; z-index: 3; }
+html[lang="th"] .hero h1 { font-size: clamp(3rem, 8vw, 7rem); }
+.hero h1 .script { display: block; font-size: .34em; margin-bottom: .1em; transform: rotate(-4deg); transform-origin: left; }
+.hero-side { justify-self: end; max-width: 300px; display: grid; gap: 16px; position: relative; z-index: 3; }
+.hero-side .num { font-family: var(--font-display); font-weight: 900; font-size: 2.2rem; line-height: 1; }
+.hero-side h2 { font-size: 1.7rem; text-transform: none; letter-spacing: 0; line-height: 1.05; }
+.hero-side p { color: var(--muted); font-size: .95rem; }
+.hero-bean { position: absolute; left: 50%; top: 50%; width: clamp(170px, 20vw, 290px); aspect-ratio: 200 / 260; transform: translate(-50%, -52%) rotate(-18deg); z-index: 2; filter: drop-shadow(0 40px 40px rgba(42,25,17,.28)); }
+.burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 1; }
+.burst .asset { position: absolute; width: 70px; aspect-ratio: 200 / 260; left: -35px; top: -45px; opacity: 0; filter: drop-shadow(0 14px 14px rgba(42,25,17,.22)); }
+.status-chip { position: absolute; left: 0; bottom: 28px; display: inline-flex; gap: 10px; align-items: center; background: #fff; border-radius: 999px; padding: 8px 16px 8px 12px; font-size: .88rem; font-weight: 500; box-shadow: 0 10px 30px -16px rgba(42,25,17,.4); z-index: 3; }
+.status-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.status-chip .dot.open { background: #2F9E5E; box-shadow: 0 0 0 4px rgba(47,158,94,.18); }
+.scroll-cue { position: absolute; right: 0; bottom: 30px; font-size: .78rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); display: flex; gap: 10px; align-items: center; z-index: 3; }
+.scroll-cue i { width: 1px; height: 36px; background: var(--muted); display: block; }
+@media (max-width: 900px) {
+  .hero { height: auto; min-height: 0; }
+  .hero .wrap { grid-template-columns: 1fr; gap: 28px; padding: 36px 0 110px; }
+  .hero-side { justify-self: start; max-width: 32em; }
+  .hero-bean { left: auto; right: 2%; top: 64px; width: 34vw; transform: rotate(-18deg); }
+  .burst { left: 76%; top: 200px; }
+  .scroll-cue { display: none; }
+}
+
+/* ---------- CHAPTERS ---------- */
+.chapter { position: relative; height: 100svh; min-height: 620px; overflow: hidden; }
+.chapter .wrap { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; }
+.ch-copy { display: grid; gap: 18px; max-width: 360px; position: relative; z-index: 3; }
+.ch-copy .step { font-family: var(--font-display); font-weight: 900; font-size: 4.4rem; line-height: .8; color: var(--caramel); }
+.ch-copy h2 { font-size: clamp(3rem, 6.4vw, 6rem); }
+html[lang="th"] .ch-copy h2 { font-size: clamp(2.2rem, 4.4vw, 3.8rem); }
+.ch-copy p { color: var(--muted); }
+.ch-art { grid-column: 2; justify-self: center; position: relative; z-index: 2; }
+.ch-side { grid-column: 3; justify-self: end; position: relative; z-index: 3; }
+@media (max-width: 900px) {
+  .chapter { height: auto; min-height: 0; padding: 90px 0; }
+  .chapter .wrap { grid-template-columns: 1fr; gap: 36px; }
+  .ch-art, .ch-side { grid-column: auto; justify-self: center; }
+  .ch-side { justify-self: start; width: 100%; }
+}
+
+/* Roast */
+.roast { background: #EDEDE0; }
+.roast-bean { width: clamp(200px, 24vw, 340px); aspect-ratio: 200 / 260; filter: hue-rotate(52deg) saturate(.55) brightness(1.45) drop-shadow(0 40px 40px rgba(42,25,17,.2)); transform: rotate(12deg); }
+.temp { font-family: var(--font-display); font-weight: 900; font-size: clamp(4rem, 8vw, 7rem); line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
+.temp small { font-size: .35em; vertical-align: top; }
+.stages { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 2px; min-width: 240px; }
+.stages li { display: flex; justify-content: space-between; gap: 18px; padding: 10px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; transition: color .3s; }
+.stages li b { font-weight: 500; }
+.stages li.on { color: var(--espresso); }
+.stages li.on b::before { content: "● "; color: var(--caramel); }
+@media (max-width: 900px) { .temp { text-align: left; } }
+
+/* Pour */
+.pour { background: var(--latte); }
+.pour-stage { position: relative; width: min(clamp(220px, 22vw, 320px), calc(clamp(460px, 78svh, 640px) / 1.7)); aspect-ratio: 200 / 340; }
+.pour-glass { position: absolute; left: 0; right: 0; bottom: 0; aspect-ratio: 200 / 340; z-index: 2; filter: drop-shadow(0 30px 30px rgba(42,25,17,.22)); }
+.facts-mini { display: grid; gap: 14px; }
+.facts-mini div { border-top: 1px solid rgba(42,25,17,.2); padding-top: 10px; display: grid; }
+.facts-mini b { font-family: var(--font-display); font-weight: 900; font-size: 2.4rem; line-height: 1; }
+.facts-mini span { color: var(--muted); font-size: .88rem; }
+
+/* Ingredients */
+.ingred { background: var(--cream); height: auto; min-height: 100svh; padding: 90px 0; }
+.ingred .head { text-align: center; display: grid; gap: 10px; justify-items: center; position: relative; z-index: 3; }
+.ingred .head h2 { font-size: clamp(2.8rem, 6vw, 5.4rem); }
+html[lang="th"] .ingred .head h2 { font-size: clamp(2rem, 4vw, 3.4rem); }
+.ballet { position: relative; width: min(820px, 100%); aspect-ratio: 1.35; margin: 30px auto 0; }
+.ballet .center { position: absolute; left: 50%; top: 50%; width: 22%; aspect-ratio: 200 / 340; transform: translate(-50%, -50%); z-index: 2; filter: drop-shadow(0 30px 30px rgba(42,25,17,.22)); }
+.ballet .item { position: absolute; transform: translate(-50%, -50%); z-index: 3; }
+.ballet .item .asset { filter: drop-shadow(0 16px 18px rgba(42,25,17,.2)); }
+.ballet svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: visible; }
+.ballet svg.lines path { fill: none; stroke: var(--espresso); stroke-width: 1; opacity: .55; }
+.tag { position: absolute; z-index: 4; display: grid; gap: 0; width: 170px; }
+.tag .script { font-size: 1.5rem; line-height: 1.1; }
+.tag span:last-child { font-size: .82rem; color: var(--muted); }
+@media (max-width: 700px) { .tag { width: 120px; } .tag .script { font-size: 1.15rem; } .tag span:last-child { display: none; } }
+
+/* Drinks carousel */
+.drinks { background: var(--espresso); color: var(--cream); padding: 100px 0 110px; overflow: hidden; position: relative; }
+.drinks .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 170px; }
+.drinks h2 { font-size: clamp(3rem, 7vw, 6.4rem); }
+html[lang="th"] .drinks h2 { font-size: clamp(2.2rem, 4.6vw, 3.8rem); }
+@media (min-width: 901px) { .drinks h2 br { display: none; } .drinks .head { flex-wrap: nowrap; } .drinks .head > div { flex: none; } }
+.drinks .head p { color: #C9B6A4; max-width: 26em; }
+.track-wrap { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 140px 0 10px; margin-top: -140px; }
+.track-wrap::-webkit-scrollbar { display: none; }
+.track { display: flex; gap: 26px; padding-inline: max(24px, (100vw - 1280px) / 2); width: max-content; }
+.card { scroll-snap-align: center; width: 330px; border-radius: 34px; padding: 170px 28px 28px; position: relative; color: var(--espresso); display: grid; gap: 10px; flex: none; }
+.card:nth-child(4n+1) { background: var(--card-1); }
+.card:nth-child(4n+2) { background: var(--card-2); }
+.card:nth-child(4n+3) { background: var(--card-3); }
+.card:nth-child(4n+4) { background: var(--card-4); }
+.card .pop { position: absolute; left: 50%; top: -120px; width: 170px; aspect-ratio: 200 / 300; transform: translateX(-60%) rotate(-6deg); filter: drop-shadow(0 26px 22px rgba(0,0,0,.28)); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+.card:hover .pop { transform: translateX(-60%) rotate(0deg) translateY(-10px); }
+.sticker { position: absolute; right: 22px; top: 22px; width: 84px; height: 84px; border-radius: 50%; background: #fff; display: grid; place-items: center; text-align: center; box-shadow: 0 10px 20px -10px rgba(0,0,0,.35); transform: rotate(10deg); }
+.sticker small { display: block; font-size: .62rem; font-weight: 700; letter-spacing: .14em; color: var(--muted); }
+.sticker b { font-family: var(--font-display); font-weight: 900; font-size: 1.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.card .script { font-size: 1.5rem; line-height: 1; color: var(--espresso); opacity: .75; }
+.card h3 { font-size: 2.5rem; line-height: .9; }
+html[lang="th"] .card h3 { font-size: 1.7rem; }
+.card p { font-size: .9rem; color: rgba(42,25,17,.75); }
+.card .row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.card .row span { font-size: .8rem; font-weight: 700; }
+.drinks .hint { margin-top: 26px; color: #C9B6A4; font-size: .85rem; display: flex; gap: 10px; align-items: center; }
+
+/* Menu */
+.menu { padding: 120px 0; }
+.menu .head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: end; margin-bottom: 56px; }
+.menu h2 { font-size: clamp(3rem, 6.6vw, 6rem); }
+html[lang="th"] .menu h2 { font-size: clamp(2.2rem, 4.4vw, 3.6rem); }
+.menu .head p { color: var(--muted); justify-self: end; max-width: 24em; }
+.menu-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+@media (max-width: 900px) { .menu .head { grid-template-columns: 1fr; } .menu .head p { justify-self: start; } .menu-cols { grid-template-columns: 1fr; gap: 36px; } }
+.menu-cols h3 { font-size: 1.6rem; padding-bottom: 12px; border-bottom: 2px solid var(--espresso); margin-bottom: 4px; }
+.mi { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.mi b { font-weight: 500; }
+.mi i { border-bottom: 1px dotted #BFAE99; transform: translateY(-4px); }
+.mi span { font-variant-numeric: tabular-nums; font-weight: 700; }
+.mi small { grid-column: 1 / -1; color: var(--muted); font-size: .85rem; margin-top: -6px; }
+
+/* Seat */
+.seat { background: var(--latte); padding: 110px 0 120px; text-align: center; overflow: hidden; }
+.seat .label { display: block; margin-bottom: 14px; }
+.seat h2 { font-size: clamp(3rem, 8vw, 7.4rem); }
+html[lang="th"] .seat h2 { font-size: clamp(2.2rem, 5vw, 4.4rem); }
+.seat-cup { width: min(520px, 86%); aspect-ratio: 1.2; margin: 30px auto 10px; filter: drop-shadow(0 40px 40px rgba(42,25,17,.25)); }
+.seat p { color: var(--muted); max-width: 30em; margin: 0 auto 26px; }
+.seat .row { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+
+/* Visit */
+.visit { padding: 110px 0; }
+.visit-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+@media (max-width: 900px) { .visit-grid { grid-template-columns: 1fr; } }
+.visit h3 { font-size: 1.5rem; margin-bottom: 14px; }
+.visit .addr { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line-height: 1.2; }
+html[lang="th"] .visit .addr { font-family: "Noto Serif Thai", serif; font-size: 1.3rem; }
+.visit p { color: var(--muted); }
+table.hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.hours td { padding: 9px 0; border-bottom: 1px solid var(--line); }
+table.hours td:last-child { text-align: right; }
+table.hours tr.today td { font-weight: 700; color: var(--caramel); }
+.map { border-radius: 24px; overflow: hidden; aspect-ratio: 4 / 3; }
+.visit .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+footer.site { background: var(--espresso); color: #CDBBA8; padding: 70px 0 120px; overflow: hidden; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
+.foot p { font-size: .9rem; }
+.made-by { border: 1.5px dashed #8C6A4E; border-radius: 20px; padding: 18px 22px; max-width: 420px; display: grid; gap: 6px; font-size: .9rem; }
+.made-by strong { font-family: var(--font-display); font-size: 1.4rem; color: #fff; text-transform: none; }
+.giant { font-family: var(--font-display); font-weight: 900; font-size: clamp(8rem, 30vw, 26rem); line-height: .78; letter-spacing: -0.03em; color: #3A251A; margin-top: 50px; }
+
+.actionbar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50; display: none; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(42,25,17,.94); backdrop-filter: blur(10px); border-radius: 999px; padding: 6px; }
+.actionbar button { font: 700 .84rem var(--font-body); border: 0; border-radius: 999px; padding: 12px 6px; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; background: transparent; color: var(--cream); }
+.actionbar button.main { background: #06C755; color: #fff; }
+.actionbar svg { width: 16px; height: 16px; }
+@media (max-width: 760px) { .actionbar { display: grid; } }
+
+.toast { position: fixed; left: 50%; bottom: 86px; transform: translate(-50%, 16px); background: var(--espresso); color: var(--cream); padding: 12px 18px; border-radius: 12px; font-size: .9rem; max-width: min(440px, calc(100% - 32px)); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 60; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- shared gradients for the drawn placeholders -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="g-bean" cx=".36" cy=".28" r=".85"><stop offset="0" stop-color="#A46A43"/><stop offset=".5" stop-color="#6A3C22"/><stop offset="1" stop-color="#2C170C"/></radialGradient>
+  <linearGradient id="g-glass" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".2" stop-color="#fff" stop-opacity=".12"/><stop offset=".8" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity=".45"/></linearGradient>
+  <linearGradient id="g-latte" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A3220"/><stop offset=".3" stop-color="#7B4A2C"/><stop offset=".48" stop-color="#C79B74"/><stop offset=".62" stop-color="#F1E6D8"/><stop offset="1" stop-color="#FBF6EE"/></linearGradient>
+  <linearGradient id="g-thai" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF3E6"/><stop offset=".16" stop-color="#F6E4CB"/><stop offset=".26" stop-color="#E9933F"/><stop offset="1" stop-color="#D9702A"/></linearGradient>
+  <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E6BE8"/><stop offset=".45" stop-color="#5B5BD6"/><stop offset="1" stop-color="#2B44B5"/></linearGradient>
+  <linearGradient id="g-dirty" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B1F10"/><stop offset=".32" stop-color="#5E341C"/><stop offset=".42" stop-color="#E9DCCB"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+  <linearGradient id="g-coco" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A2915"/><stop offset=".4" stop-color="#7A4A2A"/><stop offset=".55" stop-color="#E9E2D2"/><stop offset="1" stop-color="#F4F0E6"/></linearGradient>
+  <linearGradient id="g-ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/><stop offset=".5" stop-color="#D9ECF5" stop-opacity=".6"/><stop offset="1" stop-color="#A9CBDD" stop-opacity=".75"/></linearGradient>
+  <linearGradient id="g-leaf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2F7A2E"/><stop offset=".5" stop-color="#5DA845"/><stop offset="1" stop-color="#2C6E2A"/></linearGradient>
+  <radialGradient id="g-petal" cx=".5" cy=".85" r=".9"><stop offset="0" stop-color="#F4F1FF"/><stop offset=".18" stop-color="#6B7CF0"/><stop offset=".55" stop-color="#2D3FC9"/><stop offset="1" stop-color="#1A2591"/></radialGradient>
+  <linearGradient id="g-cer" x1="0" x2="1"><stop offset="0" stop-color="#BDB3A6"/><stop offset=".3" stop-color="#FBF8F3"/><stop offset=".6" stop-color="#EEE8DF"/><stop offset="1" stop-color="#A99F92"/></linearGradient>
+  <radialGradient id="g-crema" cx=".45" cy=".45" r=".6"><stop offset="0" stop-color="#D9A06B"/><stop offset=".6" stop-color="#A9693C"/><stop offset="1" stop-color="#6A3B1F"/></radialGradient>
+</defs></svg>
+
+<div class="demo-bar" role="note"><div class="wrap">
+  <span data-th="เว็บไซต์ตัวอย่าง: HOM เป็นร้านสมมติ ทำขึ้นเพื่อให้เห็นว่าเว็บร้านของคุณจะออกมาเป็นแบบไหน">Demo website. HOM is a fictional coffee shop, made to show what your shop's site could look like.</span>
+  <a href="#made-by" data-th="อยากได้เว็บแบบนี้ไหม?">Want one for your café?</a>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="brand" href="#top" aria-label="HOM Coffee home"><b>HOM</b><span>หอม coffee</span></a>
+  <nav class="links" aria-label="Main">
+    <a href="#roast" data-th="การคั่ว">The roast</a>
+    <a href="#drinks" data-th="เมนูแนะนำ">Signatures</a>
+    <a href="#menu" data-th="เมนู">Menu</a>
+    <a href="#visit" data-th="การเดินทาง">Visit</a>
+  </nav>
+  <div class="head-r">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="th" aria-pressed="false">TH</button>
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    </div>
+    <button class="pill dark sm" type="button" data-demo="line" data-th="จองโต๊ะ">Reserve</button>
+  </div>
+</div></header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="wrap">
+    <h1 data-th-html="&lt;span class=&quot;script&quot;&gt;กาแฟหอม ๆ&lt;/span&gt;ได้กลิ่น<br>ก่อน<br>ได้ชิม"><span class="script">Bangkok, slow roasted</span>Smell<br>it<br>first.</h1>
+    <div class="hero-side">
+      <span class="num">01</span>
+      <h2 data-th="กาแฟพิเศษ จากดอยช้าง">Speciality coffee from Doi Chang</h2>
+      <p data-th="เมล็ดจากดอยช้าง เชียงราย คั่วเองทุกสัปดาห์ ชงแก้วต่อแก้วในย่านอารีย์">Beans from one mountain in Chiang Rai, roasted here every week and brewed one cup at a time in Ari.</p>
+      <a class="pill dark" href="#drinks"><span data-th="ดูเมนูแนะนำ">See signatures</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="hero-bean asset" data-asset="bean" data-file="bean.png"></div>
+    <div class="burst" id="burst"></div>
+    <span class="status-chip"><span class="dot" id="dot"></span><span id="status">…</span></span>
+    <span class="scroll-cue"><i></i><span data-th="เลื่อนลง">Scroll</span></span>
+  </div>
+</section>
+
+<!-- CHAPTER 1: ROAST -->
+<section class="chapter roast" id="roast">
+  <div class="wrap">
+    <div class="ch-copy">
+      <span class="step">1</span>
+      <h2 data-th="คั่วช้า ๆ">Roast it slow.</h2>
+      <p data-th="เมล็ดเขียวเข้าเครื่องคั่วทุกวันจันทร์ 12 นาทีที่เปลี่ยนเมล็ดธรรมดาให้มีกลิ่นช็อกโกแลตและน้ำผึ้ง">Green beans go into our roaster every Monday. Twelve minutes turn them into chocolate and honey.</p>
+    </div>
+    <div class="ch-art"><div class="roast-bean asset" id="roast-bean" data-asset="bean" data-file="bean.png"></div></div>
+    <div class="ch-side">
+      <div class="temp" id="temp">25<small>°C</small></div>
+      <ul class="stages" id="stages">
+        <li data-at="0"><b data-th="อบให้แห้ง">Drying</b><span>&lt; 150°</span></li>
+        <li data-at="150"><b data-th="เมล็ดเริ่มเปลี่ยนสี">Browning</b><span>150–196°</span></li>
+        <li data-at="196"><b data-th="แตกครั้งแรก">First crack</b><span>196°</span></li>
+        <li data-at="212"><b data-th="คั่วกลาง พร้อมแล้ว">Medium roast</b><span>212–224°</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 2: POUR -->
+<section class="chapter pour" id="pour">
+  <div class="wrap">
+    <div class="ch-copy">
+      <span class="step">2</span>
+      <h2 data-th="รินให้ช้า">Let it pour.</h2>
+      <p data-th="ช็อตคู่ไหลลงบนนมเย็นจัด ค่อย ๆ แยกชั้นเป็นลาเต้เย็นที่คนกรุงเทพฯ รัก">A double shot runs over ice-cold milk and settles into the layered iced latte Bangkok loves.</p>
+    </div>
+    <div class="ch-art">
+      <div class="pour-stage" id="pour-stage">
+        <div class="pour-glass asset" data-asset="latte" data-file="iced-latte.png"></div>
+      </div>
+    </div>
+    <div class="ch-side facts-mini">
+      <div><b>36 ml</b><span data-th="ช็อตคู่">double shot</span></div>
+      <div><b>27 s</b><span data-th="เวลาสกัด">extraction time</span></div>
+      <div><b>4°C</b><span data-th="นมเย็นจัด">ice-cold milk</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 3: INGREDIENTS -->
+<section class="ingred" id="ingred">
+  <div class="wrap">
+    <div class="head">
+      <span class="label" data-th="03 · ส่วนผสม">03 · What's inside</span>
+      <h2 data-th="ของดีจากเมืองไทยทุกแก้ว">A little bit of Thailand</h2>
+    </div>
+    <div class="ballet" id="ballet">
+      <svg class="lines" viewBox="0 0 1000 740" preserveAspectRatio="none" aria-hidden="true">
+        <path id="ln1" d="M175 170 C 260 170 320 210 420 260"/>
+        <path id="ln2" d="M830 150 C 740 150 680 210 590 260"/>
+        <path id="ln3" d="M170 560 C 260 560 330 520 420 470"/>
+        <path id="ln4" d="M840 590 C 750 590 680 520 590 470"/>
+      </svg>
+      <div class="center asset" data-asset="latte" data-file="iced-latte.png"></div>
+      <div class="item" id="it1" style="left:17%;top:22%;width:17%"><div class="asset" data-asset="pandan" data-file="pandan.png" style="aspect-ratio:1"></div></div>
+      <div class="item" id="it2" style="left:82%;top:20%;width:13%"><div class="asset" data-asset="pea" data-file="butterfly-pea.png" style="aspect-ratio:1"></div></div>
+      <div class="item" id="it3" style="left:16%;top:76%;width:13%"><div class="asset" data-asset="ice" data-file="ice.png" style="aspect-ratio:1"></div></div>
+      <div class="item" id="it4" style="left:84%;top:80%;width:9%"><div class="asset" data-asset="bean" data-file="bean.png" style="aspect-ratio:200/260"></div></div>
+      <div class="tag" style="left:2%;top:1%"><span class="script" data-th="ใบเตย">Pandan</span><span data-th="หอมแบบขนมไทย ใส่ในน้ำเชื่อม">House syrup, sweet like Thai desserts</span></div>
+      <div class="tag" style="right:-2%;top:0%;text-align:right"><span class="script" data-th="ดอกอัญชัน">Butterfly pea</span><span data-th="สีฟ้าจากธรรมชาติ ไม่ใส่สี">Natural blue, no colouring</span></div>
+      <div class="tag" style="left:1%;bottom:-2%"><span class="script" data-th="น้ำแข็งก้อนใหญ่">Big clear ice</span><span data-th="ละลายช้า รสไม่จาง">Melts slowly, stays strong</span></div>
+      <div class="tag" style="right:-2%;bottom:-4%;text-align:right"><span class="script" data-th="ดอยช้าง">Doi Chang</span><span data-th="อาราบิก้า 100% เชียงราย">100% Arabica, Chiang Rai</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE DRINKS -->
+<section class="drinks" id="drinks">
+  <div class="wrap head">
+    <div>
+      <span class="label" style="color:#C9B6A4" data-th="04 · เมนูแนะนำ">04 · Signatures</span>
+      <h2 data-th-html="แก้วที่<br>ต้องลอง">Pick your <br>glass.</h2>
+    </div>
+    <p data-th="ทุกแก้วสั่งหวานน้อยได้ เปลี่ยนเป็นนมโอ๊ต +฿20">Every drink can be made less sweet. Oat milk +฿20.</p>
+  </div>
+  <div class="track-wrap" id="track-wrap">
+    <div class="track" id="track">
+      <article class="card"><div class="pop asset" data-asset="thai" data-file="thai-tea.png"></div><span class="sticker"><span><small data-th="ราคา">PRICE</small><b>฿75</b></span></span>
+        <span class="script" data-th="ชาไทย">Thai classic</span><h3 data-th="ชาไทยเย็น">Thai tea</h3>
+        <p data-th="ชาเชียงรายต้มเข้ม นมข้นหวาน ครีมสดด้านบน ไม่ใส่สี">Strong Chiang Rai tea, condensed milk, a float of cream. No food colouring.</p>
+        <div class="row"><span data-th="ขายดีที่สุด">Best seller</span><button class="pill sm dark" type="button" data-demo="line" data-th="สั่งเลย">Order</button></div></article>
+      <article class="card"><div class="pop asset" data-asset="blue" data-file="blue-drink.png"></div><span class="sticker"><span><small data-th="ราคา">PRICE</small><b>฿85</b></span></span>
+        <span class="script" data-th="ดอกอัญชัน">Butterfly pea</span><h3 data-th="อัญชันมะนาว">Blue lemon soda</h3>
+        <p data-th="อัญชันชงสด เปลี่ยนสีเป็นม่วงเมื่อเติมมะนาว">Fresh butterfly-pea tea that turns violet when you stir in the lime.</p>
+        <div class="row"><span data-th="ไม่มีคาเฟอีน">Caffeine free</span><button class="pill sm dark" type="button" data-demo="line" data-th="สั่งเลย">Order</button></div></article>
+      <article class="card"><div class="pop asset" data-asset="dirty" data-file="dirty.png"></div><span class="sticker"><span><small data-th="ราคา">PRICE</small><b>฿95</b></span></span>
+        <span class="script" data-th="ซิกเนเจอร์">Signature</span><h3>Dirty</h3>
+        <p data-th="นมเย็นจัด ราดช็อตร้อนด้านบน ดื่มทันทีก่อนชั้นจะผสมกัน">Ice-cold milk with a hot shot on top. Drink it before the layers meet.</p>
+        <div class="row"><span data-th="ดื่มเร็ว ๆ">Drink fast</span><button class="pill sm dark" type="button" data-demo="line" data-th="สั่งเลย">Order</button></div></article>
+      <article class="card"><div class="pop asset" data-asset="coco" data-file="coconut-coffee.png"></div><span class="sticker"><span><small data-th="ราคา">PRICE</small><b>฿95</b></span></span>
+        <span class="script" data-th="สดชื่น">Refreshing</span><h3 data-th="กาแฟมะพร้าว">Coconut coffee</h3>
+        <p data-th="น้ำมะพร้าวน้ำหอมสด กับช็อตเอสเปรสโซ">Fresh Nam Hom coconut water with a shot of espresso.</p>
+        <div class="row"><span data-th="ไม่ใส่นม">No milk</span><button class="pill sm dark" type="button" data-demo="line" data-th="สั่งเลย">Order</button></div></article>
+      <article class="card"><div class="pop asset" data-asset="latte" data-file="iced-latte.png"></div><span class="sticker"><span><small data-th="ราคา">PRICE</small><b>฿80</b></span></span>
+        <span class="script" data-th="คลาสสิก">Classic</span><h3 data-th="ลาเต้เย็น">Iced latte</h3>
+        <p data-th="ช็อตคู่ดอยช้าง นมสด และน้ำแข็งก้อนใหญ่">Double Doi Chang shot, fresh milk, big clear ice.</p>
+        <div class="row"><span data-th="หวานน้อยได้">Less sweet OK</span><button class="pill sm dark" type="button" data-demo="line" data-th="สั่งเลย">Order</button></div></article>
+    </div>
+  </div>
+  <p class="wrap hint"><svg width="20" height="12" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 6h18M14 1l5 5-5 5"/></svg><span data-th="เลื่อนเพื่อดูเพิ่ม">Scroll or swipe for more</span></p>
+</section>
+
+<!-- MENU -->
+<section class="menu" id="menu">
+  <div class="wrap">
+    <div class="head">
+      <h2 data-th-html="เมนู<br>ทั้งหมด">The full<br>menu.</h2>
+      <p data-th="ราคารวม VAT แล้ว · รับเงินสด บัตร และพร้อมเพย์">Prices include VAT. Cash, card and PromptPay accepted.</p>
+    </div>
+    <div class="menu-cols">
+      <div><h3 data-th="กาแฟ">Coffee</h3>
+        <div class="mi"><b>Espresso</b><i></i><span>฿60</span></div>
+        <div class="mi"><b>Americano</b><i></i><span>฿65</span><small data-th="ร้อน หรือ เย็น">Hot or iced</small></div>
+        <div class="mi"><b>Iced latte</b><i></i><span>฿80</span></div>
+        <div class="mi"><b>Dirty</b><i></i><span>฿95</span></div>
+        <div class="mi"><b data-th="กาแฟมะพร้าว">Coconut coffee</b><i></i><span>฿95</span></div>
+        <div class="mi"><b>Pour-over</b><i></i><span>฿120</span><small data-th="ดอยช้าง คั่วอ่อน">Doi Chang, light roast</small></div>
+      </div>
+      <div><h3 data-th="ไม่ใช่กาแฟ">Not coffee</h3>
+        <div class="mi"><b data-th="ชาไทยเย็น">Thai tea</b><i></i><span>฿75</span></div>
+        <div class="mi"><b data-th="อัญชันมะนาว">Blue lemon soda</b><i></i><span>฿85</span></div>
+        <div class="mi"><b data-th="ชาเขียวมัทฉะ">Matcha latte</b><i></i><span>฿90</span></div>
+        <div class="mi"><b data-th="โกโก้เย็น">Iced cocoa</b><i></i><span>฿75</span></div>
+        <div class="mi"><b data-th="นมสดใบเตย">Pandan milk</b><i></i><span>฿70</span></div>
+      </div>
+      <div><h3 data-th="ขนม">Bakery</h3>
+        <div class="mi"><b>Butter croissant</b><i></i><span>฿70</span></div>
+        <div class="mi"><b data-th="ขนมปังสังขยาใบเตย">Pandan kaya toast</b><i></i><span>฿65</span></div>
+        <div class="mi"><b>Thai tea roll cake</b><i></i><span>฿95</span></div>
+        <div class="mi"><b>Basque cheesecake</b><i></i><span>฿130</span><small data-th="มีวันละ 12 ชิ้น">12 slices a day</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEAT -->
+<section class="seat" id="seat">
+  <div class="wrap">
+    <span class="label" data-th="05 · ที่นั่งของคุณ">05 · Your seat</span>
+    <h2 data-th-html="โต๊ะของคุณ<br>รออยู่">Your table<br>is waiting.</h2>
+    <div class="seat-cup asset" id="seat-cup" data-asset="cup" data-file="hero-cup.png"></div>
+    <p data-th="ทักไลน์เพื่อจองโต๊ะริมหน้าต่าง หรือจัดวันเกิดเล็ก ๆ เราตอบภายในหนึ่งชั่วโมง">Message us on LINE for a window table or a small birthday. We reply within the hour.</p>
+    <div class="row"><button class="pill line" type="button" data-demo="line" data-th="จองโต๊ะทาง LINE">Reserve on LINE</button><button class="pill" type="button" data-demo="call" data-th="โทรหาเรา">Call us</button></div>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section class="visit" id="visit">
+  <div class="wrap visit-grid">
+    <div>
+      <span class="label" data-th="การเดินทาง">Visit</span>
+      <p class="addr" style="margin-top:12px" data-th-html="12 ซอยหอม พญาไท<br>กรุงเทพฯ 10400">12 Hom Lane, Phaya Thai,<br>Bangkok 10400</p>
+      <p style="margin-top:14px" data-th="BTS อารีย์ ทางออก 1 เดิน 5 นาที · จอดรถได้ 4 คัน · โทร 02-000-0000">BTS Ari exit 1, 5 min walk · 4 parking spaces · Tel. 02-000-0000</p>
+      <div class="row"><button class="pill dark sm" type="button" data-demo="maps" data-th="เปิดใน Google Maps">Open in Google Maps</button><button class="pill sm" type="button" data-demo="reviews" data-th="อ่านรีวิว">Read reviews</button></div>
+    </div>
+    <div><h3 data-th="เวลาเปิด">Opening hours</h3><table class="hours"><tbody id="hours"></tbody></table></div>
+    <div class="map" id="map"></div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot">
+      <div><p style="color:#fff;font-weight:700">HOM · หอม coffee</p><p>12 Hom Lane, Ari, Bangkok · LINE @homcoffee · IG @hom.ari</p></div>
+      <div class="made-by" id="made-by"><strong data-th="อยากได้เว็บแบบนี้ให้ร้านคุณ?">Want a website like this for your café?</strong>
+        <span data-th="เมนู เวลาเปิด Google Maps และปุ่ม LINE พร้อมใช้ในไม่กี่วัน">Menu, hours, Google Maps and LINE booking, ready in a few days.</span>
+        <span style="color:#fff">[Your name] · LINE [your LINE ID]</span></div>
+    </div>
+    <div class="giant" aria-hidden="true">HOM.</div>
+  </div>
+</footer>
+
+<nav class="actionbar" aria-label="Quick actions">
+  <button type="button" data-demo="maps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span data-th="นำทาง">Directions</span></button>
+  <button type="button" data-demo="call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span data-th="โทร">Call</span></button>
+  <button type="button" class="main" data-demo="line"><span data-th="จองโต๊ะ">Reserve</span></button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  /* ---------- drawn placeholders (replaced by photos/<file> when present) ---------- */
+  function iceCubes(y, n) { var s = ""; var xs = [52, 98, 72, 120]; for (var i = 0; i < n; i++) s += '<rect x="' + xs[i % 4] + '" y="' + (y + (i % 2) * 22) + '" width="34" height="34" rx="7" fill="url(#g-ice)" opacity=".75" transform="rotate(' + (i % 2 ? 14 : -10) + ' ' + (xs[i % 4] + 17) + ' ' + (y + 17) + ')"/>'; return s; }
+  var DRAW = {
+    bean: function () {
+      return '<svg viewBox="0 0 200 260"><ellipse cx="100" cy="130" rx="84" ry="114" fill="url(#g-bean)"/>' +
+        '<path d="M102 22C78 70 126 108 98 150S110 222 100 242" stroke="#1C0D05" stroke-width="11" fill="none" stroke-linecap="round"/>' +
+        '<path d="M102 26C82 70 128 108 102 150" stroke="#C9935F" stroke-width="2" fill="none" opacity=".45"/>' +
+        '<ellipse cx="64" cy="86" rx="20" ry="38" fill="#fff" opacity=".14" transform="rotate(-18 64 86)"/></svg>';
+    },
+    latte: function () {
+      return '<svg viewBox="0 0 200 340"><ellipse cx="100" cy="330" rx="78" ry="8" fill="#000" opacity=".12"/>' +
+        '<path d="M26 30h148l-14 284q-1 12-13 12H53q-12 0-13-12z" fill="url(#g-latte)"/>' + iceCubes(46, 4) +
+        '<path d="M26 30h148l-14 284q-1 12-13 12H53q-12 0-13-12z" fill="url(#g-glass)" stroke="rgba(255,255,255,.9)" stroke-width="3"/>' +
+        '<path d="M40 44l10 260" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".4"/><ellipse cx="100" cy="30" rx="74" ry="6" fill="none" stroke="#fff" stroke-width="3" opacity=".9"/></svg>';
+    },
+    thai: function () {
+      return '<svg viewBox="0 0 200 300"><path d="M28 34h144l-16 250q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-thai)"/>' + iceCubes(40, 3) +
+        '<path d="M28 34h144l-16 250q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-glass)"/><rect x="20" y="26" width="160" height="12" rx="6" fill="rgba(255,255,255,.75)"/>' +
+        '<path d="M42 52l9 220" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".35"/></svg>';
+    },
+    blue: function () {
+      return '<svg viewBox="0 0 200 300"><path d="M32 30h136l-12 252q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-blue)"/>' + iceCubes(40, 4) +
+        '<path d="M32 30h136l-12 252q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-glass)" stroke="rgba(255,255,255,.85)" stroke-width="3"/>' +
+        '<g transform="translate(150 34)"><circle r="26" fill="#C5E37A"/><circle r="21" fill="#EAF6C4"/><path d="M0-20V20M-20 0H20M-14-14 14 14M14-14-14 14" stroke="#C5E37A" stroke-width="2.5"/></g></svg>';
+    },
+    dirty: function () {
+      return '<svg viewBox="0 0 200 300"><path d="M34 90h132l-10 190q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-dirty)"/>' +
+        '<path d="M34 90h132l-10 190q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-glass)" stroke="rgba(255,255,255,.85)" stroke-width="3"/>' +
+        '<ellipse cx="100" cy="90" rx="66" ry="8" fill="#6E3E20"/><ellipse cx="94" cy="88" rx="30" ry="3" fill="#C8875A" opacity=".7"/>' +
+        '<path d="M46 104l7 170" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".35"/></svg>';
+    },
+    coco: function () {
+      return '<svg viewBox="0 0 200 300"><path d="M32 40h136l-12 242q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-coco)"/>' + iceCubes(50, 3) +
+        '<path d="M32 40h136l-12 242q-1 10-11 10H55q-10 0-11-10z" fill="url(#g-glass)" stroke="rgba(255,255,255,.85)" stroke-width="3"/>' +
+        '<g transform="translate(150 44)"><path d="M-30 0a30 30 0 0 1 60 0z" fill="#6B4226"/><path d="M-25 0a25 25 0 0 1 50 0z" fill="#FFFDF7"/></g></svg>';
+    },
+    ice: function () {
+      return '<svg viewBox="0 0 200 200"><g transform="rotate(-12 100 100)"><rect x="30" y="30" width="140" height="140" rx="26" fill="url(#g-ice)"/>' +
+        '<rect x="48" y="44" width="40" height="90" rx="14" fill="#fff" opacity=".55"/><rect x="120" y="110" width="30" height="40" rx="10" fill="#fff" opacity=".35"/>' +
+        '<rect x="30" y="30" width="140" height="140" rx="26" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/></g></svg>';
+    },
+    pandan: function () {
+      var s = '<svg viewBox="0 0 200 200">';
+      [-48, -30, -12, 6, 22, 40, 56].forEach(function (r, i) { s += '<path d="M100 190C' + (96 + i) + ' 120 ' + (104 - i) + ' 70 100 ' + (14 + i * 6) + 'C' + (112 + i) + ' 70 ' + (110 - i) + ' 130 104 190z" fill="url(#g-leaf)" transform="rotate(' + r + ' 100 190)" opacity="' + (.82 + (i % 2) * .18) + '"/>'; });
+      return s + '</svg>';
+    },
+    pea: function () {
+      var s = '<svg viewBox="0 0 200 200"><g transform="translate(100 104)">';
+      [0, 72, 144, 216, 288].forEach(function (r, i) { s += '<ellipse cx="0" cy="-44" rx="' + (i === 0 ? 40 : 30) + '" ry="' + (i === 0 ? 54 : 44) + '" fill="url(#g-petal)" transform="rotate(' + r + ')"/>'; });
+      return s + '<circle r="16" fill="#FFF3B0"/><circle r="8" fill="#F5C842"/></g></svg>';
+    },
+    cup: function () {
+      return '<svg viewBox="0 0 600 500"><ellipse cx="300" cy="420" rx="250" ry="52" fill="url(#g-cer)"/><ellipse cx="300" cy="410" rx="190" ry="34" fill="#E6DFD4"/>' +
+        '<path d="M120 170C120 340 190 420 300 420S480 340 480 170z" fill="url(#g-cer)"/>' +
+        '<path d="M476 210c70-10 84 90 10 110" fill="none" stroke="url(#g-cer)" stroke-width="30" stroke-linecap="round"/>' +
+        '<ellipse cx="300" cy="170" rx="180" ry="48" fill="#F4EFE7"/><ellipse cx="300" cy="174" rx="164" ry="38" fill="url(#g-crema)"/>' +
+        '<g fill="#FBF3E6" opacity=".95"><path d="M300 206c-40-6-60-18-56-28 30 6 46 10 56 16 10-6 26-10 56-16 4 10-16 22-56 28z"/><path d="M300 190c-32-4-48-14-44-22 24 4 36 8 44 12 8-4 20-8 44-12 4 8-12 18-44 22z"/><path d="M300 176c-24-3-36-10-32-16 18 3 26 6 32 9 6-3 14-6 32-9 4 6-8 13-32 16z"/><ellipse cx="300" cy="150" rx="22" ry="10"/></g>' +
+        '<path d="M300 210V146" stroke="#C8925E" stroke-width="2" opacity=".6"/>' +
+        '<path d="M150 210C160 300 200 370 260 400" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".35" fill="none"/></svg>';
+    }
+  };
+  function mount(el) {
+    el.insertAdjacentHTML("afterbegin", DRAW[el.dataset.asset]());
+    var img = new Image(); img.alt = ""; img.decoding = "async";
+    img.onload = function () { if (img.naturalWidth) el.classList.add("has-photo"); };
+    img.onerror = function () { img.remove(); };
+    img.src = "photos/" + el.dataset.file;
+    el.appendChild(img);
+  }
+  // burst beans (copies of bean.png)
+  var BURST = [[-260, -160, -40, .9], [-190, 120, 30, 1.1], [-120, -260, 60, .7], [150, -220, -20, .8], [240, -60, 50, 1.2], [200, 170, -60, .9], [-300, 20, 80, .75], [40, 240, 10, 1], [320, 120, -35, .7], [-40, -300, 120, .6]];
+  var burst = document.getElementById("burst");
+  BURST.forEach(function () { var d = document.createElement("div"); d.className = "asset"; d.dataset.asset = "bean"; d.dataset.file = "bean.png"; burst.appendChild(d); });
+  document.querySelectorAll(".asset").forEach(mount);
+  if (location.hash === "#slots") document.documentElement.classList.add("show-slots");
+
+  /* ---------- map ---------- */
+  document.getElementById("map").innerHTML = '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="300" fill="#E7D6C1"/>' +
+    '<g stroke="#F3ECE2" stroke-width="18"><path d="M-10 80H410"/><path d="M-10 220H410"/><path d="M130-10V310"/><path d="M300-10V310"/></g>' +
+    '<path d="M60-10V310" stroke="#D2BEA6" stroke-width="28"/><rect x="38" y="60" width="44" height="40" rx="10" fill="#2A1911"/><text x="60" y="85" text-anchor="middle" font-family="DM Sans" font-weight="700" font-size="11" fill="#F3ECE2">BTS</text>' +
+    '<path d="M82 80H215V140" stroke="#C6823F" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round" fill="none"/>' +
+    '<circle cx="215" cy="160" r="34" fill="#C6823F" opacity=".18"/><circle cx="215" cy="160" r="12" fill="#2A1911"/>' +
+    '<text x="236" y="148" font-family="Playfair Display, serif" font-weight="900" font-size="22" fill="#2A1911">HOM</text></svg>';
+
+  /* ---------- hours & status ---------- */
+  var HOURS = { 0: ["08:00", "18:00"], 1: ["07:30", "18:00"], 2: ["07:30", "18:00"], 3: null, 4: ["07:30", "18:00"], 5: ["07:30", "18:00"], 6: ["08:00", "18:00"] };
+  var DAYS = { en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], th: ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"] };
+  var T = { en: { open: "Open now · until ", closed: "Closed now · opens ", today: "today ", tomorrow: "tomorrow ", closedDay: "Closed" }, th: { open: "เปิดอยู่ · ถึง ", closed: "ปิดอยู่ · เปิด", today: "วันนี้ ", tomorrow: "พรุ่งนี้ ", closedDay: "ปิด" } };
+  function now() { var p = {}; new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Bangkok", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; }); return { d: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), m: (+p.hour % 24) * 60 + +p.minute }; }
+  function mins(t) { var a = t.split(":"); return a[0] * 60 + +a[1]; }
+  function fm(t) { return t.replace(/^0/, ""); }
+  var lang = "en";
+  function renderHours() {
+    var n = now(), t = T[lang], h = HOURS[n.d], dot = document.getElementById("dot"), st = document.getElementById("status");
+    if (h && n.m >= mins(h[0]) && n.m < mins(h[1])) { dot.className = "dot open"; st.textContent = t.open + fm(h[1]); }
+    else { dot.className = "dot"; var nx = ""; if (h && n.m < mins(h[0])) nx = t.today + fm(h[0]); else for (var i = 1; i < 8; i++) { var d = (n.d + i) % 7; if (HOURS[d]) { nx = (i === 1 ? t.tomorrow : DAYS[lang][d] + " ") + fm(HOURS[d][0]); break; } } st.textContent = t.closed + nx; }
+    var tb = document.getElementById("hours"); tb.innerHTML = "";
+    [1, 2, 3, 4, 5, 6, 0].forEach(function (d) { var tr = document.createElement("tr"); if (d === n.d) tr.className = "today"; tr.innerHTML = "<td>" + DAYS[lang][d] + "</td><td>" + (HOURS[d] ? fm(HOURS[d][0]) + " – " + fm(HOURS[d][1]) : t.closedDay) + "</td>"; tb.appendChild(tr); });
+  }
+
+  /* ---------- language ---------- */
+  var NOTES = {
+    en: { line: "Demo: on a real site this opens the café's LINE Official Account.", maps: "Demo: on a real site this opens directions in Google Maps.", reviews: "Demo: on a real site this opens the café's reviews.", call: "Demo: on a real site this calls the café." },
+    th: { line: "ตัวอย่าง: ในเว็บจริงจะเปิด LINE Official Account ของร้าน", maps: "ตัวอย่าง: ในเว็บจริงจะเปิดเส้นทางใน Google Maps", reviews: "ตัวอย่าง: ในเว็บจริงจะเปิดหน้ารีวิวของร้าน", call: "ตัวอย่าง: ในเว็บจริงจะโทรหาร้านทันที" }
+  };
+  function setLang(l) {
+    lang = l; document.documentElement.lang = l;
+    document.querySelectorAll("[data-th]").forEach(function (el) { if (el.dataset.en === undefined) el.dataset.en = el.textContent; el.textContent = l === "th" ? el.dataset.th : el.dataset.en; });
+    document.querySelectorAll("[data-th-html]").forEach(function (el) { if (el.dataset.enHtml === undefined) el.dataset.enHtml = el.innerHTML; el.innerHTML = l === "th" ? el.dataset.thHtml : el.dataset.enHtml; });
+    document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l ? "true" : "false"); });
+    renderHours(); try { localStorage.setItem("cafe-lang", l); } catch (e) {}
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
+  var saved = "en"; try { saved = localStorage.getItem("cafe-lang") || "en"; } catch (e) {}
+  setLang(saved);
+
+  var toast = document.getElementById("toast"), timer;
+  document.querySelectorAll("[data-demo]").forEach(function (b) { b.addEventListener("click", function () { toast.textContent = NOTES[lang][b.dataset.demo]; toast.classList.add("show"); clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove("show"); }, 3200); }); });
+
+  /* ---------- scroll story ---------- */
+  if (!window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+  var mm = gsap.matchMedia();
+
+  mm.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", motion: "(prefers-reduced-motion: no-preference)" }, function (ctx) {
+    var c = ctx.conditions;
+    var stages = document.querySelectorAll("#stages li"), tempEl = document.getElementById("temp");
+    function setTemp(p) {
+      var t = Math.round(25 + p * 199);
+      tempEl.innerHTML = t + "<small>°C</small>";
+      var on = 0; stages.forEach(function (li, i) { if (t >= +li.dataset.at) on = i; });
+      stages.forEach(function (li, i) { li.classList.toggle("on", i === on); });
+    }
+    if (!c.motion) { setTemp(1); return; }
+
+    /* Hero: the bean turns, the burst of beans flies out */
+    var heroTl = gsap.timeline({ scrollTrigger: { trigger: "#hero", start: "top top", end: c.desktop ? "+=110%" : "bottom top", scrub: 0.8, pin: c.desktop } });
+    heroTl.to(".hero-bean", { rotation: 200, scale: c.desktop ? 0.55 : 0.8, yPercent: -60, ease: "none" }, 0)
+      .to(".hero h1", { yPercent: -12, ease: "none" }, 0)
+      .to(".hero-side", { yPercent: -30, opacity: 0.2, ease: "none" }, 0);
+    document.querySelectorAll("#burst .asset").forEach(function (b, i) {
+      var p = BURST[i], k = c.desktop ? 1 : 0.45;
+      heroTl.fromTo(b, { x: 0, y: 0, scale: 0.2, rotation: 0, opacity: 0 }, { x: p[0] * k, y: p[1] * k + 120, scale: p[3], rotation: p[2] * 3, opacity: 1, ease: "power2.out" }, 0.05 + i * 0.015);
+    });
+
+    /* Roast: green bean darkens, temperature climbs */
+    gsap.timeline({ scrollTrigger: { trigger: "#roast", start: c.desktop ? "top top" : "top 70%", end: c.desktop ? "+=150%" : "bottom 40%", scrub: 0.6, pin: c.desktop, onUpdate: function (s) { setTemp(s.progress); } } })
+      .fromTo("#roast-bean", { filter: "hue-rotate(52deg) saturate(.55) brightness(1.45) drop-shadow(0 40px 40px rgba(42,25,17,.2))", rotation: 12, scale: .9 },
+        { filter: "hue-rotate(0deg) saturate(1.1) brightness(.92) drop-shadow(0 40px 40px rgba(42,25,17,.35))", rotation: -8, scale: 1.05, ease: "none" }, 0)
+      .fromTo("#roast", { backgroundColor: "#EDEDE0" }, { backgroundColor: "#E6D3BE", ease: "none" }, 0);
+
+    /* Pour: glass rises into place */
+    gsap.timeline({ scrollTrigger: { trigger: "#pour", start: c.desktop ? "top top" : "top 70%", end: c.desktop ? "+=140%" : "bottom 40%", scrub: 0.6, pin: c.desktop } })
+      .fromTo(".pour-glass", { yPercent: 18, scale: .92 }, { yPercent: 0, scale: 1, ease: "power2.out", duration: .5 }, 0);
+
+    /* Ingredients: items fly out from behind the glass, label lines draw */
+    var lines = document.querySelectorAll(".ballet svg.lines path");
+    lines.forEach(function (p) { var L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+    var ing = gsap.timeline({ scrollTrigger: { trigger: "#ballet", start: "top 75%", end: "bottom 60%", scrub: 0.6 } });
+    ["#it1", "#it2", "#it3", "#it4"].forEach(function (id, i) {
+      ing.fromTo(id, { left: "50%", top: "50%", scale: .3, opacity: 0, rotation: (i % 2 ? 40 : -40) }, { left: document.querySelector(id).style.left, top: document.querySelector(id).style.top, scale: 1, opacity: 1, rotation: 0, ease: "power2.out" }, i * .08);
+    });
+    ing.to(lines, { strokeDashoffset: 0, stagger: .06, ease: "none" }, .3).fromTo(".ballet .tag", { opacity: 0, y: 12 }, { opacity: 1, y: 0, stagger: .06 }, .4);
+
+    /* Drinks: horizontal scroll on desktop, swipe on phones */
+    if (c.desktop) {
+      var tw = document.getElementById("track-wrap"), track = document.getElementById("track");
+      tw.style.overflow = "visible";
+      gsap.to(track, { x: function () { return -(track.scrollWidth - window.innerWidth); }, ease: "none",
+        scrollTrigger: { trigger: "#drinks", start: "top top", end: function () { return "+=" + (track.scrollWidth - window.innerWidth); }, scrub: 0.6, pin: true, invalidateOnRefresh: true } });
+    }
+
+    /* Seat: cup settles in */
+    gsap.fromTo("#seat-cup", { scale: .7, rotation: -10, yPercent: 20 }, { scale: 1, rotation: 0, yPercent: 0, ease: "none", scrollTrigger: { trigger: "#seat", start: "top 85%", end: "center 60%", scrub: 0.6 } });
+    return function () { var tw = document.getElementById("track-wrap"); tw.style.overflow = ""; };
+  });
+})();
+</script>
+</body>
+</html>
