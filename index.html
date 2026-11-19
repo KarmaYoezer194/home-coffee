@@ -132,7 +132,12 @@ html[lang="th"] .ch-copy h2 { font-size: clamp(2.2rem, 4.4vw, 3.8rem); }
 }
 
 /* Roast */
-.roast { background: #EDEDE0; }
+.roast { background: #CFD8B4; }
+.roast .ch-copy .step { color: #6B3410; }
+.roast .ch-copy p, .roast .stages li { color: #43301F; }
+.roast .stages li { border-top-color: rgba(42,25,17,.24); }
+.roast .stages li.on { color: var(--espresso); font-weight: 700; }
+.roast .stages li.on b::before { color: #6B3410; }
 .roast-bean { width: clamp(200px, 24vw, 340px); aspect-ratio: 200 / 260; transform: rotate(12deg); }
 .roast-bean > svg, .roast-bean > img { filter: hue-rotate(52deg) saturate(.55) brightness(1.45); }
 .temp { font-family: var(--font-display); font-weight: 900; font-size: clamp(4rem, 8vw, 7rem); line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
@@ -145,13 +150,16 @@ html[lang="th"] .ch-copy h2 { font-size: clamp(2.2rem, 4.4vw, 3.8rem); }
 @media (max-width: 900px) { .temp { text-align: left; } }
 
 /* Pour */
-.pour { background: var(--latte); }
+.pour { background: #452A1B; color: var(--cream); }
+.pour .ch-copy .step { color: #E8AE6E; }
+.pour .ch-copy p { color: #E3D3C1; }
+.pour .pour-glass { --shadow-strength: .7; }
 .pour-stage { position: relative; width: min(clamp(220px, 22vw, 320px), calc(clamp(460px, 78svh, 640px) / 1.7)); aspect-ratio: 200 / 340; }
 .pour-glass { position: absolute; left: 0; right: 0; bottom: 0; aspect-ratio: 200 / 340; z-index: 2; }
 .facts-mini { display: grid; gap: 14px; }
-.facts-mini div { border-top: 1px solid rgba(42,25,17,.2); padding-top: 10px; display: grid; }
+.facts-mini div { border-top: 1px solid rgba(243,236,226,.26); padding-top: 10px; display: grid; }
 .facts-mini b { font-family: var(--font-display); font-weight: 900; font-size: 2.4rem; line-height: 1; }
-.facts-mini span { color: var(--muted); font-size: .88rem; }
+.facts-mini span { color: #E3D3C1; font-size: .88rem; }
 
 /* Ingredients */
 .ingred { background: var(--cream); height: auto; min-height: 100svh; padding: 90px 0; }
@@ -240,7 +248,7 @@ footer.site { background: var(--espresso); color: #CDBBA8; padding: 70px 0 120px
 .foot p { font-size: .9rem; }
 .made-by { border: 1.5px dashed #8C6A4E; border-radius: 20px; padding: 18px 22px; max-width: 420px; display: grid; gap: 6px; font-size: .9rem; }
 .made-by strong { font-family: var(--font-display); font-size: 1.4rem; color: #fff; text-transform: none; }
-.giant { font-family: var(--font-display); font-weight: 900; font-size: clamp(8rem, 30vw, 26rem); line-height: .78; letter-spacing: -0.03em; color: #3A251A; margin-top: 50px; }
+.giant { font-family: var(--font-display); font-weight: 900; font-size: clamp(8rem, 30vw, 26rem); line-height: .78; letter-spacing: -0.03em; color: #3A251A; margin-top: 50px; pointer-events: none; }
 
 .actionbar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50; display: none; grid-template-columns: repeat(3, 1fr); gap: 6px; background: rgba(42,25,17,.94); backdrop-filter: blur(10px); border-radius: 999px; padding: 6px; }
 .actionbar button { font: 700 .84rem var(--font-body); border: 0; border-radius: 999px; padding: 12px 6px; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; background: transparent; color: var(--cream); }
@@ -476,7 +484,7 @@ footer.site { background: var(--espresso); color: #CDBBA8; padding: 70px 0 120px
       <div><p style="color:#fff;font-weight:700">HOM · หอม coffee</p><p>12 Hom Lane, Ari, Bangkok · LINE @homcoffee · IG @hom.ari</p></div>
       <div class="made-by" id="made-by"><strong data-th="อยากได้เว็บแบบนี้ให้ร้านคุณ?">Want a website like this for your café?</strong>
         <span data-th="เมนู เวลาเปิด Google Maps และปุ่ม LINE พร้อมใช้ในไม่กี่วัน">Menu, hours, Google Maps and LINE booking, ready in a few days.</span>
-        <span style="color:#fff">[Your name] · LINE [your LINE ID]</span></div>
+        <a href="https://line.me/ti/p/~karmadyoezer" target="_blank" rel="noopener" style="color:#fff">Karma Yoezer · LINE karmadyoezer</a></div>
     </div>
     <div class="giant" aria-hidden="true">HOM.</div>
   </div>
@@ -655,7 +663,7 @@ footer.site { background: var(--espresso); color: #CDBBA8; padding: 70px 0 120px
     gsap.timeline({ scrollTrigger: { trigger: c.desktop ? "#roast" : "#roast .ch-art", start: c.desktop ? "top top" : "top 85%", end: c.desktop ? "+=150%" : "bottom 40%", scrub: 0.6, pin: c.desktop, onUpdate: function (s) { setTemp(s.progress); } } })
       .fromTo("#roast-bean > svg, #roast-bean > img", { filter: "hue-rotate(52deg) saturate(.55) brightness(1.45)" }, { filter: "hue-rotate(0deg) saturate(1.1) brightness(.92)", ease: "none" }, 0)
       .fromTo("#roast-bean", { rotation: 12, scale: .9 }, { rotation: -8, scale: 1.05, ease: "none" }, 0)
-      .fromTo("#roast", { backgroundColor: "#EDEDE0" }, { backgroundColor: "#E6D3BE", ease: "none" }, 0);
+      .fromTo("#roast", { backgroundColor: "#CFD8B4" }, { backgroundColor: "#DFA76C", ease: "none" }, 0);
 
     /* Pour: glass rises into place */
     gsap.timeline({ scrollTrigger: { trigger: c.desktop ? "#pour" : "#pour-stage", start: c.desktop ? "top top" : "top 85%", end: c.desktop ? "+=140%" : "center 55%", scrub: 0.6, pin: c.desktop } })
